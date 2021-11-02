@@ -8,22 +8,25 @@
 #include "serial.h"
 #include "timer.h"
 
+#define high 255
+#define low 20
+
 int ledCounter = 0;
 
 int main () {
 	
 	DDRB |= (1<<PB3); // output pin
 
-	timerZero_init(); // initalise timer 0
-
+	fastPWMmode(); // setup fast PWM mode non inverting.
+			
 	while (1) { // Loop infinitely
 		
-		if (TCNT0 == 0) { // check if TCNT0 has been reset to zero
-			ledCounter++; 
-			if (ledCounter == 10) {
-				ledCounter = 0; // reset counter for next loop
-				PORTB ^= (1<<PB3); // XOR led on PB3
-			}
-		}
+		PORTB ^= (1<<PB3); // XOR led on PB3
+		_delay_ms(1000);
+		if (OCR2A == high) {
+		OCR2A = low;  // change brightness to low.
+		} else {
+			OCR2A = high; // change brightness to high.
+		} 
 	}
 }

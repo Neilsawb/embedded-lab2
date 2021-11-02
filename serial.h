@@ -10,6 +10,7 @@ int uart_putchar(char chr, FILE *stream);
 
 char uart_getchar(void);
 void timerZero_init(void);
+void fastPWMmode(void);
 
 #endif
 
