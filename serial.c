@@ -48,7 +48,7 @@ void timerZero_init(void) {
 
     TCNT0 = 0;
 
-    //OCR0A = 30;
+    OCR0A = 156;
 
 }
 
@@ -59,13 +59,18 @@ void fastPWMmode(void) {
 	TCCR2A |= (1<<COM2A1) | (1<<COM2A0) | (1<<WGM21) | (1<<WGM20);
 
 	//  16MHz (clock cycle) /64(prescaler) = 250,000Hz
-	// OCR2A = 16000000/(256*64)=16,384 => 976.
+	// OCR2A = 16000000/(256*64)=16,384 => 976 wave form 
+	// (atmel328p datasheet page 197)
+	// with OCR2A of 255 according to on-line calculator.
+	// https://ee-diary.blogspot.com/p/atmega-microcontroller-timercounter.html
 	
+
+
 	TCCR2B |= (1 << CS01) | (1 << CS00); // Prescaler = 64.
 									
 	TCNT2 = 0;
 
-	OCR2A = low ; // (25) 10% of duty cycle. (255) 100%.
+	OCR2A = 255 ; // (25) 10% of duty cycle. (255) 100%.
 								
 	// OCR0A = In Fast PWM mode, the counter is incremented 
 	// until the counter value matches the TOP value. The
