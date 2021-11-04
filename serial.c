@@ -7,6 +7,9 @@
 #define high 255
 #define low 25
 
+volatile int rampValue;
+volatile int directionValue;
+
 
 static FILE uart_stdout = FDEV_SETUP_STREAM(uart_putchar, NULL, _FDEV_SETUP_WRITE);
 
@@ -40,15 +43,15 @@ void timerZero_init(void) {
 
     TCCR0A |= (1<<WGM02);
     TCCR0A &= ~(1 << WGM00);
-    TCCR0A &= ~(1 << WGM02);
+    TCCR0A &= ~(1 << WGM01);
 
     //  16MHz (clock cycle) /1024 (prescaler) = 15.625Hz
-    // 15.625/((1/10)*1000) = 156,25 (OCR0A = 156)
+    // 15.625/((1/16)*1000) = 62 (use 65 instead, 62 result is too big) => OCR0A = 240 )
     TCCR0B |= (1 << CS02)| (0 << CS01) | (1 << CS00); // Prescaler = 1024.
 
     TCNT0 = 0;
 
-    OCR0A = 156;
+    OCR0A = 240;
 
 }
 
@@ -76,6 +79,13 @@ void fastPWMmode(void) {
 	// until the counter value matches the TOP value. The
 	// counter is then cleared at the following timer clock cycle.
 
+}
+
+int simpleRamp() {
+    if (rampValue == 0 || rampValue == 255) { // controls the loop from 0 to 255 and back to 0 again
+        directionValue = directionValue * -1; // by flipping the sign of 1 with * -1.
+    }
+    return directionValue;
 }
 
 
